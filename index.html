@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARSKEY AFFILIATE AI Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* BASE & MODERN GRID BACKGROUND */
+        body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f8fafc; }
+        
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            pointer-events: none;
+        }
+
+        /* AMBIENT GLOWS - PREMIUM GREEN SAAS STYLE */
+        .ambient-glow-1 {
+            position: fixed; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0,0,0,0) 60%);
+            top: -20vw; left: -20vw; z-index: -1; pointer-events: none;
+        }
+        .ambient-glow-2 {
+            position: fixed; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, rgba(0,0,0,0) 60%);
+            bottom: -10vw; right: -10vw; z-index: -1; pointer-events: none;
+        }
+        .ambient-glow-3 {
+            position: fixed; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, rgba(132, 204, 22, 0.08) 0%, rgba(0,0,0,0) 60%);
+            top: 40%; left: 30%; z-index: -1; pointer-events: none;
+        }
+
+        /* PREMIUM GLASSMORPHISM PANELS */
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(20, 20, 25, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.12); /* Top highlight */
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        /* MODERN FORM INPUTS */
+        .glass-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .glass-input:focus {
+            background: rgba(15, 15, 20, 0.8);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.3);
+            outline: none;
+        }
+
+        /* MARKETING CALL-TO-ACTION BUTTONS */
+        .marketing-btn {
+            background-size: 200% auto;
+            transition: all 0.4s ease;
+        }
+        .marketing-btn:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+        }
+        .marketing-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* CUSTOM SCROLLBAR (SLEEK) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; border: 2px solid #030712; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+    <!-- MODERN BACKGROUND ELEMENTS -->
+    <div class="bg-grid"></div>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const App = () => {
+            // ==========================================
+            // STATE: AUTHENTICATION (TOKEN)
+            // ==========================================
+            const [isAuthorized, setIsAuthorized] = useState(false);
+            const [inputToken, setInputToken] = useState('');
+            const [tokenError, setTokenError] = useState('');
+            const [showToken, setShowToken] = useState(false);
+            
+            // DAFTAR TOKEN YANG DIIZINKAN (Bisa bro tambah/ganti sesuka hati)
+            const VALID_TOKENS = [
+                'MK-SUU', 
+                'AFFILIATE2026', 
+                'PRODEV',
+                'MK-X7B9A',
+                'MK-2P4F8',
+                'MK-9L3DZ',
+                'MK-W5K1M',
+                'MK-Q8R2T',
+                'MK-4N6YH',
+                'MK-C3V7J',
+                'MK-M9E4W',
+                'MK-T1H5P',
+                'MK-7F2RK'
+            ];
+
+            const handleTokenSubmit = (e) => {
+                e.preventDefault();
+                if (VALID_TOKENS.includes(inputToken)) {
+                    setIsAuthorized(true);
+                    setTokenError('');
+                } else {
+                    setTokenError('Kode Token tidak valid atau sudah kadaluarsa!');
+                }
+            };
+
+            const [activeTab, setActiveTab] = useState('generator'); // 'generator' | 'storyboard'
+
+            // ==========================================
+            // STATE: TAB 1 (AI GENERATOR)
+            // ==========================================
+            const [productImage, setProductImage] = useState(null);
+            const [productImagePreview, setProductImagePreview] = useState(null);
+            const [characterImage, setCharacterImage] = useState(null);
+            const [characterImagePreview, setCharacterImagePreview] = useState(null);
+            const [backgroundImage, setBackgroundImage] = useState(null);
+            const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
+            
+            const [productName, setProductName] = useState('');
+            const [productCategory, setProductCategory] = useState('');
+            const [displayMethod, setDisplayMethod] = useState('');
+            const [productDetails, setProductDetails] = useState('');
+
+            const categories = ['Fashion Pria', 'Fashion Wanita', 'Elektronik', 'Sport', 'Skincare', 'Lainnya...'];
+            const displayMethods = [
+                { value: 'Pegang di Tangan (Umum)', label: 'Pegang di Tangan (Umum)' },
+                { value: 'Pakai Langsung (Khusus Fashion/ Aksesoris)', label: 'Pakai Langsung (Khusus Fashion/ Aksesoris)' },
+                { value: 'Letakkan di Meja', label: 'Letakkan di Meja' },
+                { value: 'Unboxing/Buka Kotak', label: 'Unboxing/Buka Kotak' },
+                { value: 'Produk Saja', label: 'Produk Saja' },
+                { value: 'Orang di Kamera', label: 'Orang di Kamera' }
+            ];
+
+            const [isGenerating, setIsGenerating] = useState(false);
+            const [generatedData, setGeneratedData] = useState(null);
+            const [rawJsonText, setRawJsonText] = useState(''); 
+            const [outputViewMode, setOutputViewMode] = useState('visual'); 
+            const [fullJsonCopySuccess, setFullJsonCopySuccess] = useState(false);
+            const [iconError, setIconError] = useState(false);
+            const [genError, setGenError] = useState(null);
+
+            const [sceneImages, setSceneImages] = useState({});
+            const [sceneIsGenerating, setSceneIsGenerating] = useState({});
+            const [editablePrompts, setEditablePrompts] = useState({});
+
+            // ==========================================
+            // STATE: TAB 2 (STORYBOARD UI)
+            // ==========================================
+            const [sbProductName, setSbProductName] = useState('');
+            const [sbProductImage, setSbProductImage] = useState(null);
+            const [sbProductImagePreview, setSbProductImagePreview] = useState(null);
+            const [sbCharacterImage, setSbCharacterImage] = useState(null);
+            const [sbCharacterImagePreview, setSbCharacterImagePreview] = useState(null);
+            
+            const [sbProductCategory, setSbProductCategory] = useState('');
+            const [sbDisplayMethod, setSbDisplayMethod] = useState('');
+            const [sbAdditionalIdea, setSbAdditionalIdea] = useState(''); 
+            
+            const [sbStoryboardImagePreview, setSbStoryboardImagePreview] = useState(null);
+            const [sbIsGeneratingImage, setSbIsGeneratingImage] = useState(false);
+            const [sbImageError, setSbImageError] = useState(null);
+            
+            const [sbGeneratedVideoJson, setSbGeneratedVideoJson] = useState(null);
+            const [sbIsGeneratingVideo, setSbIsGeneratingVideo] = useState(false);
+            const [sbVideoError, setSbVideoError] = useState(null);
+
+            const handleImageUpload = (e, setFile, setPreview) => {
+                const file = e.target.files[0];
+                if (file) {
+                    setFile(file);
+                    const reader = new FileReader();
+                    reader.onloadend = () => setPreview(reader.result);
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const copyText = async (text) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textArea);
+                    return true;
+                }
+            };
+
+            const downloadImage = (dataUrl, filename) => {
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const cleanJsonString = (str) => {
+                let cleaned = str.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                return cleaned;
+            };
+
+            const fetchGeminiText = async (prompt) => {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }]
+                };
+                
+                try {
+                    const response = await fetch(apiUrl, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify(payload) 
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    console.error("Text generation error:", error);
+                    throw error;
+                }
+            };
+
+            const fetchGeminiImage = async (prompt, aspectRatio, base64Images = []) => {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`; 
+                
+                let parts = [{ text: prompt }];
+                
+                if (Array.isArray(base64Images)) {
+                    base64Images.forEach(imgData => {
+                        if (imgData) {
+                            const mimeType = imgData.split(';')[0].split(':')[1];
+                            const base64Str = imgData.split(',')[1];
+                            parts.push({
+                                inlineData: { mimeType: mimeType, data: base64Str }
+                            });
+                        }
+                    });
+                } else if (base64Images) {
+                    const mimeType = base64Images.split(';')[0].split(':')[1];
+                    const base64Str = base64Images.split(',')[1];
+                    parts.push({
+                        inlineData: { mimeType: mimeType, data: base64Str }
+                    });
+                }
+
+                const payload = {
+                    contents: [{ role: 'user', parts: parts }],
+                    generationConfig: {
+                        responseModalities: ['IMAGE'],
+                        imageConfig: { aspectRatio: aspectRatio }
+                    }
+                };
+
+                const getFallbackImage = (ratio) => {
+                    const text = ratio === "9:16" ? "STORYBOARD 9:16 PREVIEW" : "SCENE 16:9 PREVIEW";
+                    const width = ratio === "9:16" ? 720 : 1280;
+                    const height = ratio === "9:16" ? 1280 : 720;
+                    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#1e1b4b"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="${width/15}" font-weight="bold" fill="#a855f7">${text}</text><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="${width/35}" fill="#6b7280">(Auto-Generated Fallback)</text></svg>`;
+                    return `data:image/svg+xml;base64,${btoa(svgData)}`;
+                };
+
+                try {
+                    const response = await fetch(apiUrl, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify(payload) 
+                    });
+                    
+                    if (!response.ok) {
+                        console.warn(`API Image failed: ${response.status}`);
+                        return getFallbackImage(aspectRatio);
+                    }
+                    
+                    const result = await response.json();
+                    const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                    
+                    if (part) {
+                        return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    } else {
+                        throw new Error("No image data found in response");
+                    }
+                } catch (error) {
+                    console.error("Image API Error:", error);
+                    return getFallbackImage(aspectRatio);
+                }
+            };
+
+            const handleGenerateScript = async () => {
+                if (!productName) {
+                    setGenError("Nama produk wajib diisi bro!");
+                    return;
+                }
+                
+                setIsGenerating(true);
+                setGenError(null);
+                
+                let displayAction = "";
+                if (displayMethod === "Pegang di Tangan (Umum)") {
+                    displayAction = "Pastikan adegan karakter memegang produk di tangannya dengan interaktif.";
+                } else if (displayMethod === "Produk Saja") {
+                    displayAction = "Fokus B-Roll Cinematic Product Shot. DILARANG ADA KARAKTER ORANG DALAM FRAME.";
+                } else if (displayMethod === "Orang di Kamera") {
+                    displayAction = "Karakter menatap langsung lensa kamera (eye contact) sambil menjelaskan produk layaknya vlogger.";
+                } else if (displayMethod) {
+                    displayAction = `Aksi utamanya adalah: ${displayMethod}.`;
+                }
+
+                const prompt = `Buatkan naskah video affiliate singkat (10 detik) untuk produk ${productName}. Kategori: ${productCategory}. ${displayAction}. Detail tambahan: ${productDetails}.
+                PENTING: Output WAJIB menggunakan format JSON murni tanpa markdown, dengan struktur key: 0_THUMBNAIL_COVER, 1_HOOK_SCENE, 2_BENEFIT_SCENE, 3_CALL_TO_ACTION. 
+                Setiap scene wajib berisi: "duration", "visual", "action", "audio", "text_animation".
+                Untuk bagian visual, deskripsikan dengan gaya foto realistik, cinematic photography, hyper-realistic, live-action style, resolusi 8k DSLR.`;
+
+                try {
+                    let resultText = await fetchGeminiText(prompt);
+                    resultText = cleanJsonString(resultText);
+                    const parsedData = JSON.parse(resultText);
+                    processParsedData(parsedData);
+                } catch (err) {
+                    const fallbackData = {
+                        "0_THUMBNAIL_COVER": {
+                            "duration": "0s",
+                            "visual": "Foto close-up produk 8k DSLR dengan pencahayaan dramatis, background blur estetik.",
+                            "action": "Kamera fokus tajam pada detail utama produk.",
+                            "audio": "N/A",
+                            "text_animation": "DISKON SPESIAL HARI INI"
+                        },
+                        "1_HOOK_SCENE": {
+                            "duration": "0s-3s",
+                            "visual": "Karakter (atau produk) tersorot tajam kamera dengan hyper-realistic, live-action style.",
+                            "action": "Menunjukkan daya tarik utama produk.",
+                            "audio": "Kalian wajib banget punya yang satu ini!",
+                            "text_animation": "WAJIB PUNYA!"
+                        },
+                        "2_BENEFIT_SCENE": {
+                            "duration": "3s-7s",
+                            "visual": "Kamera memutar perlahan (360 derajat) menyorot material detail super tajam.",
+                            "action": "Menyorot keunggulan dan fitur produk.",
+                            "audio": "Bahan super premium, awet, dan harganya terjangkau banget.",
+                            "text_animation": "Kualitas Premium"
+                        },
+                        "3_CALL_TO_ACTION": {
+                            "duration": "7s-10s",
+                            "visual": "Produk disandingkan dengan panah neon menunjuk ke bawah (3D Realistic).",
+                            "action": "Mengarahkan penonton untuk check out.",
+                            "audio": "Buruan klik keranjang kuning sekarang sebelum kehabisan!",
+                            "text_animation": "KLIK KERANJANG KUNING"
+                        }
+                    };
+                    processParsedData(fallbackData);
+                } finally {
+                    setIsGenerating(false);
+                }
+            };
+
+            const processParsedData = (parsedData) => {
+                const initialPrompts = {};
+                for (const key in parsedData) {
+                    const isCover = key === '0_THUMBNAIL_COVER';
+                    initialPrompts[key] = `Buatkan foto cinematic super realistik, rasio ${isCover ? '9:16' : '16:9'}. Fokus pada produk ${productName}. ${parsedData[key].visual} ${parsedData[key].action} Gaya foto realistik, cinematic photography, hyper-realistic, live-action style, resolusi 8k DSLR, detail sangat tajam.`;
+                }
+                setGeneratedData(parsedData);
+                setRawJsonText(JSON.stringify(parsedData, null, 4));
+                setEditablePrompts(initialPrompts);
+                setSceneImages({});
+            };
+
+            const handlePromptEdit = (key, value) => {
+                setEditablePrompts(prev => ({ ...prev, [key]: value }));
+            };
+
+            const handleGenerateImage = async (sceneKey) => {
+                setSceneIsGenerating(prev => ({ ...prev, [sceneKey]: true }));
+                try {
+                    const isPortrait = sceneKey === "0_THUMBNAIL_COVER";
+                    const aspectRatio = isPortrait ? "9:16" : "16:9";
+                    let prompt = editablePrompts[sceneKey];
+                    
+                    const imagesToSend = [];
+                    if (productImagePreview) imagesToSend.push(productImagePreview);
+                    if (characterImagePreview) {
+                        imagesToSend.push(characterImagePreview);
+                        prompt += " [PENTING: Saya melampirkan gambar referensi Karakter (gambar kedua/ketiga). Pertahankan wajah, gaya rambut, dan identitas karakter tersebut sama persis dengan referensi].";
+                    }
+                    if (backgroundImagePreview) imagesToSend.push(backgroundImagePreview);
+
+                    const imageUrl = await fetchGeminiImage(prompt, aspectRatio, imagesToSend);
+                    setSceneImages(prev => ({ ...prev, [sceneKey]: imageUrl }));
+                } catch (err) {
+                    console.error("Gagal generate image", err);
+                    alert("Gagal memproses gambar AI. Coba beberapa saat lagi.");
+                } finally {
+                    setSceneIsGenerating(prev => ({ ...prev, [sceneKey]: false }));
+                }
+            };
+
+            const handleSbGenerateImage = async () => {
+                if (!sbProductImagePreview) {
+                    setSbImageError("Upload gambar produk dulu bro!");
+                    return;
+                }
+                
+                setSbIsGeneratingImage(true);
+                setSbStoryboardImagePreview(null);
+                setSbImageError(null);
+                
+                try {
+                    const imagesToSend = [];
+                    imagesToSend.push(sbProductImagePreview);
+                    
+                    let characterPrompt = "";
+                    if (sbCharacterImagePreview) {
+                        imagesToSend.push(sbCharacterImagePreview);
+                        characterPrompt = " PENTING: Saya menyertakan gambar referensi kedua yaitu Karakter. Harap pastikan wajah, penampilan, dan perawakan orang di dalam storyboard SAMA PERSIS dengan karakter referensi tersebut.";
+                    }
+
+                    let displayAction = "";
+                    if (sbDisplayMethod === "Pegang di Tangan") {
+                        displayAction = "AKSI VISUAL UTAMA: Karakter memegang produk dengan jelas di tangannya, menonjolkan detail produk ke arah kamera secara estetik.";
+                    } else if (sbDisplayMethod === "Produk Saja") {
+                        displayAction = "AKSI VISUAL UTAMA: Fokus 100% HANYA PADA PRODUK (Cinematic Product Shot). PASTIKAN TIDAK ADA ORANG ATAU KARAKTER di dalam gambar, DILARANG MENAMPILKAN WAJAH.";
+                    } else if (sbDisplayMethod === "Unboxing") {
+                        displayAction = "AKSI VISUAL UTAMA: Proses unboxing atau adegan membuka kotak kemasan produk dengan kesan premium dan estetik.";
+                    } else if (sbDisplayMethod === "Orang di Kamera") {
+                        displayAction = "AKSI VISUAL UTAMA: Karakter menatap langsung ke arah lensa kamera (eye contact) layaknya seorang kreator konten/vlogger yang sedang berbicara mempromosikan produk.";
+                    } else if (sbDisplayMethod) {
+                        displayAction = `AKSI VISUAL UTAMA: Fokus pada aksi ${sbDisplayMethod}.`;
+                    }
+
+                    const ideaPrompt = sbAdditionalIdea ? ` IDEA TAMBAHAN SPESIFIK DARI PENGGUNA (WAJIB DITERAPKAN): ${sbAdditionalIdea}.` : "";
+
+                    const prompt = `Buatkan gambar storyboard produk, rasio 9:16. ${sbProductName ? `Nama Produk: ${sbProductName}.` : ''} ${sbProductCategory ? `Kategori: ${sbProductCategory}.` : ''} ${displayAction} ${ideaPrompt} ${characterPrompt} Gaya visual WAJIB foto realistik, cinematic photography, hyper-realistic, live-action style, resolusi 8k DSLR, pencahayaan dramatis, detail sangat tajam.`;
+                    
+                    const imageUrl = await fetchGeminiImage(prompt, "9:16", imagesToSend);
+                    setSbStoryboardImagePreview(imageUrl);
+                } catch (err) {
+                    console.error("Storyboard image error", err);
+                    setSbImageError("Gagal merender storyboard. Pastikan server AI berjalan baik.");
+                } finally {
+                    setSbIsGeneratingImage(false);
+                }
+            };
+
+            const handleSbGenerateVideoJson = async () => {
+                setSbIsGeneratingVideo(true);
+                setSbGeneratedVideoJson(null);
+                setSbVideoError(null);
+                
+                let displayAction = "";
+                if (sbDisplayMethod === "Pegang di Tangan") {
+                    displayAction = "Pastikan seluruh scene difokuskan pada karakter yang memegang produk di tangannya secara interaktif.";
+                } else if (sbDisplayMethod === "Produk Saja") {
+                    displayAction = "Pastikan seluruh scene murni B-Roll Cinematic Product Shot. JANGAN ADA KARAKTER ORANG dalam deskripsi visual/action.";
+                } else if (sbDisplayMethod === "Unboxing") {
+                    displayAction = "Pastikan scene berisi urutan proses membuka kotak produk secara perlahan dan estetik.";
+                } else if (sbDisplayMethod === "Orang di Kamera") {
+                    displayAction = "Pastikan scene menampilkan interaksi karakter yang berbicara menghadap ke kamera dengan antusias menjelaskan produk.";
+                } else if (sbDisplayMethod) {
+                    displayAction = `Pastikan aksi utamanya adalah: ${sbDisplayMethod}.`;
+                }
+
+                const ideaPrompt = sbAdditionalIdea ? ` IDEA TAMBAHAN PENGGUNA: ${sbAdditionalIdea}. Terapkan ide ini ke dalam deskripsi visual dan action.` : "";
+
+                const prompt = `Buatkan prompt text-to-video durasi 10 detik. ${sbProductName ? `Nama Produk: ${sbProductName}.` : ''} ${sbProductCategory ? `Kategori: ${sbProductCategory}.` : ''} ${displayAction} ${ideaPrompt}
+                Format WAJIB JSON murni tanpa markdown.
+                Struktur JSON:
+                {
+                    "video_generation_instruction": {
+                        "prompt_instruction": "Cinematic live-action, photorealistic, 8k resolution, kamera DSLR.",
+                        "metadata": { "duration": "10s", "format": "JSON", "aspect_ratio": "9:16" },
+                        "structure": {
+                            "0s-3s": { "visual": "...", "action": "..." },
+                            "3s-7s": { "visual": "...", "action": "..." },
+                            "7s-10s": { "visual": "...", "action": "..." }
+                        }
+                    }
+                }`;
+
+                try {
+                    let jsonText = await fetchGeminiText(prompt);
+                    jsonText = cleanJsonString(jsonText);
+                    const parsedJson = JSON.parse(jsonText);
+                    setSbGeneratedVideoJson(parsedJson);
+                } catch (err) {
+                    const fallbackVideoJson = {
+                        "video_generation_instruction": {
+                            "prompt_instruction": "Cinematic live-action, photorealistic, 8k resolution, kamera DSLR.",
+                            "metadata": { "duration": "10s", "format": "JSON", "aspect_ratio": "9:16" },
+                            "structure": {
+                                "0s-3s": { "visual": "Close-up super tajam pada produk utama dengan efek cahaya bokeh estetik di latar belakang.", "action": "Kamera melakukan pergerakan pan perlahan dari kiri ke kanan (cinematic pan)." },
+                                "3s-7s": { "visual": "Tampilan detail tekstur dan desain produk yang sangat realistis.", "action": "Gerakan slow-motion menyorot fitur utama produk." },
+                                "7s-10s": { "visual": "Produk bersinar dramatis di tengah layar.", "action": "Zoom in cepat ke arah produk sebagai call to action." }
+                            }
+                        }
+                    };
+                    setSbGeneratedVideoJson(fallbackVideoJson);
+                } finally {
+                    setSbIsGeneratingVideo(false);
+                }
+            };
+
+            // ==========================================
+            // RENDER: TOKEN LOGIN SCREEN (GERBANG MASUK)
+            // ==========================================
+            if (!isAuthorized) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center relative z-10 p-4 font-inter">
+                        <div className="glass-panel p-8 rounded-3xl max-w-sm w-full text-center animate-fade-in relative overflow-hidden shadow-2xl">
+                            {/* Efek Cahaya di Belakang Form */}
+                            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                            
+                            <div className="w-20 h-20 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(16,185,129,0.4)] border border-white/20 p-1 relative z-10">
+                                <img src="https://hosting.photobucket.com/fc8dad50-5cda-48ec-b957-92cd6d32fab2/6fe42ac8-50e4-415f-a5be-f043a5050900.png" alt="Logo" className="w-full h-full object-contain rounded-xl" />
+                            </div>
+                            
+                            <h2 className="text-2xl font-extrabold text-white mb-2 relative z-10">Sistem Terkunci</h2>
+                            <p className="text-xs text-slate-400 mb-8 relative z-10">Masukkan kode token akses untuk menggunakan AI Studio.</p>
+
+                            <form onSubmit={handleTokenSubmit} className="relative z-10">
+                                <div className="mb-5 relative">
+                                    <i className="fa-solid fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-500"></i>
+                                    <input 
+                                        type={showToken ? "text" : "password"} 
+                                        value={inputToken}
+                                        onChange={(e) => setInputToken(e.target.value)}
+                                        placeholder="Ketik Kode Token..." 
+                                        className="w-full glass-input rounded-xl pl-10 pr-12 py-4 text-center tracking-widest font-mono text-emerald-400 focus:outline-none shadow-inner"
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowToken(!showToken)}
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-emerald-400 focus:outline-none transition-colors"
+                                    >
+                                        <i className={`fa-solid ${showToken ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                                    </button>
+                                </div>
+                                
+                                {tokenError && (
+                                    <div className="mb-5 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-bold animate-fade-in">
+                                        <i className="fa-solid fa-triangle-exclamation mr-1"></i> {tokenError}
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    type="submit"
+                                    className="w-full py-4 rounded-xl font-bold text-sm tracking-wide bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 marketing-btn text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex justify-center items-center gap-2"
+                                >
+                                    <i className="fa-solid fa-unlock"></i> Buka Akses AI
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-7xl mx-auto p-4 md:p-8 font-inter pb-24 relative z-10">
+                    
+                    {/* Header - Modern Tech SaaS Style */}
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 glass-panel p-6 rounded-3xl relative overflow-hidden">
+                        <div className="flex items-center gap-5 relative z-10">
+                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-600 rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.5)] overflow-hidden border border-white/20 p-1">
+                                {!iconError ? (
+                                    <img 
+                                        src="https://hosting.photobucket.com/fc8dad50-5cda-48ec-b957-92cd6d32fab2/6fe42ac8-50e4-415f-a5be-f043a5050900.png" 
+                                        alt="Logo" 
+                                        className="w-full h-full object-contain rounded-xl"
+                                        onError={() => setIconError(true)}
+                                    />
+                                ) : (
+                                    <i className="fa-solid fa-bolt text-2xl text-white"></i>
+                                )}
+                            </div>
+                            <div>
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-lime-300 tracking-tight drop-shadow-sm">MARSKEY AFFILIATE</h1>
+                                <p className="text-xs md:text-sm text-slate-400 font-medium tracking-wide mt-1">Next-Gen AI Prompt & Storyboard Studio</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tab Navigation - High Contrast Active State */}
+                    <div className="flex justify-center mb-10">
+                        <div className="glass-panel p-1.5 rounded-2xl inline-flex gap-2 bg-opacity-50">
+                            <button 
+                                onClick={() => setActiveTab('generator')}
+                                className={`px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'generator' ? 'bg-white text-slate-900 shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+                            >
+                                <i className={`fa-solid fa-wand-magic-sparkles ${activeTab === 'generator' ? 'text-emerald-600' : ''}`}></i> AI Generator
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('storyboard')}
+                                className={`px-8 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'storyboard' ? 'bg-white text-slate-900 shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
+                            >
+                                <i className={`fa-solid fa-film ${activeTab === 'storyboard' ? 'text-teal-600' : ''}`}></i> Storyboard UI
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* ========================================== */}
+                    {/* TAB 1: AI GENERATOR */}
+                    {/* ========================================== */}
+                    <div style={{ display: activeTab === 'generator' ? 'block' : 'none' }}>
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            
+                            {/* LEFT PANEL - INPUT FORM */}
+                            <div className="lg:col-span-5 space-y-6">
+                                <div className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden group">
+                                    <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-3"><i className="fa-solid fa-sliders text-emerald-400"></i> Konfigurasi Video</h2>
+                                    
+                                    <div className="grid grid-cols-3 gap-4 mb-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">1. Produk *</label>
+                                            <label className="flex flex-col items-center justify-center w-full h-24 border border-dashed glass-input rounded-xl cursor-pointer hover:border-emerald-400 transition-colors group">
+                                                {productImagePreview ? (
+                                                    <div className="w-full h-full p-1 flex justify-center items-center"><img src={productImagePreview} className="max-h-full rounded object-contain" /></div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center"><i className="fa-solid fa-box-open text-slate-500 text-lg mb-1 group-hover:text-emerald-400 transition-colors"></i></div>
+                                                )}
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setProductImage, setProductImagePreview)} />
+                                            </label>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">2. Karakter</label>
+                                            <label className="flex flex-col items-center justify-center w-full h-24 border border-dashed glass-input rounded-xl cursor-pointer hover:border-teal-400 transition-colors group">
+                                                {characterImagePreview ? (
+                                                    <div className="w-full h-full p-1 flex justify-center items-center"><img src={characterImagePreview} className="max-h-full rounded object-contain" /></div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center"><i className="fa-regular fa-user text-slate-500 text-lg mb-1 group-hover:text-teal-400 transition-colors"></i></div>
+                                                )}
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setCharacterImage, setCharacterImagePreview)} />
+                                            </label>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">3. Background</label>
+                                            <label className="flex flex-col items-center justify-center w-full h-24 border border-dashed glass-input rounded-xl cursor-pointer hover:border-lime-400 transition-colors group">
+                                                {backgroundImagePreview ? (
+                                                    <div className="w-full h-full p-1 flex justify-center items-center"><img src={backgroundImagePreview} className="max-h-full rounded object-contain" /></div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center"><i className="fa-regular fa-image text-slate-500 text-lg mb-1 group-hover:text-lime-400 transition-colors"></i></div>
+                                                )}
+                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setBackgroundImage, setBackgroundImagePreview)} />
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Nama Produk *</label>
+                                                <input type="text" className="w-full glass-input rounded-xl px-4 py-3 text-sm" placeholder="Contoh: Sepatu Sneaker" value={productName} onChange={(e) => setProductName(e.target.value)} />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Kategori Produk</label>
+                                                <div className="relative">
+                                                    <select className="w-full glass-input rounded-xl px-4 py-3 text-sm appearance-none" value={productCategory} onChange={(e) => setProductCategory(e.target.value)}>
+                                                        <option value="" className="text-slate-500">Pilih Kategori...</option>
+                                                        {categories.map(cat => <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>)}
+                                                    </select>
+                                                    <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Cara Menampilkan Produk</label>
+                                            <div className="relative">
+                                                <select className="w-full glass-input rounded-xl px-4 py-3 text-sm appearance-none" value={displayMethod} onChange={(e) => setDisplayMethod(e.target.value)}>
+                                                    <option value="" className="text-slate-500">Pilih Aksi...</option>
+                                                    {displayMethods.map(method => <option key={method.value} value={method.value} className="bg-slate-900 text-white">{method.label}</option>)}
+                                                </select>
+                                                <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Detail Produk <span className="text-[9px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 ml-1">Opsional</span></label>
+                                            <textarea rows="3" className="w-full glass-input rounded-xl p-4 text-sm resize-none" placeholder="Jelaskan keunggulan produk/Pakaian karakter..." value={productDetails} onChange={(e) => setProductDetails(e.target.value)}></textarea>
+                                        </div>
+                                    </div>
+
+                                    {genError && <div className="mt-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-bold text-center">{genError}</div>}
+
+                                    <button 
+                                        onClick={handleGenerateScript}
+                                        disabled={isGenerating}
+                                        className={`w-full mt-8 py-4 rounded-xl font-bold text-sm tracking-wide flex justify-center items-center gap-3 border-none ${isGenerating ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 marketing-btn text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]'}`}
+                                    >
+                                        {isGenerating ? <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Generating Magic...</> : <><i className="fa-solid fa-bolt text-lg"></i> Generate Prompt JSON</>}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* RIGHT PANEL - OUTPUT */}
+                            <div className="lg:col-span-7 flex flex-col h-full">
+                                <div className="glass-panel rounded-3xl p-6 md:p-8 flex-grow flex flex-col relative">
+                                    
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h2 className="text-xl font-bold text-white flex items-center gap-3"><i className="fa-solid fa-code text-lime-400"></i> Output JSON</h2>
+                                        
+                                        {generatedData && (
+                                            <div className="flex gap-3">
+                                                <div className="bg-black/50 rounded-lg p-1 border border-white/10 flex">
+                                                    <button onClick={() => setOutputViewMode('visual')} className={`px-4 py-1.5 rounded-md text-[11px] font-bold transition-all ${outputViewMode === 'visual' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Visual Cards</button>
+                                                    <button onClick={() => setOutputViewMode('json')} className={`px-4 py-1.5 rounded-md text-[11px] font-bold transition-all ${outputViewMode === 'json' ? 'bg-teal-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Raw JSON</button>
+                                                </div>
+                                                
+                                                <button onClick={() => { copyText(rawJsonText); setFullJsonCopySuccess(true); setTimeout(() => setFullJsonCopySuccess(false), 2000); }} className="bg-white/10 hover:bg-white/20 border border-white/10 text-white px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center gap-2">
+                                                    {fullJsonCopySuccess ? <><i className="fa-solid fa-check text-green-400"></i> Copied!</> : <><i className="fa-regular fa-copy"></i> Copy</>}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {!generatedData ? (
+                                        <div className="flex-grow flex flex-col items-center justify-center text-slate-500 min-h-[400px]">
+                                            <i className="fa-solid fa-wand-magic-sparkles text-6xl mb-6 opacity-20"></i>
+                                            <p className="text-sm">Isi konfigurasi di panel kiri lalu klik Generate</p>
+                                        </div>
+                                    ) : (
+                                        <div className="flex-grow overflow-hidden relative">
+                                            {outputViewMode === 'json' && (
+                                                <div className="absolute inset-0 animate-fade-in flex flex-col">
+                                                    <textarea 
+                                                        value={rawJsonText}
+                                                        onChange={(e) => setRawJsonText(e.target.value)}
+                                                        className="flex-grow w-full bg-[#030712] border border-white/10 rounded-xl p-5 text-[12px] text-emerald-400 font-mono resize-none focus:outline-none focus:border-emerald-500/50 custom-scrollbar shadow-inner"
+                                                    ></textarea>
+                                                </div>
+                                            )}
+
+                                            {outputViewMode === 'visual' && (
+                                                <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar h-full animate-fade-in" style={{maxHeight: '70vh'}}>
+                                                    {Object.entries(generatedData).map(([key, data], index) => {
+                                                        const isCover = key === "0_THUMBNAIL_COVER";
+                                                        const themeColor = isCover ? "amber" : (index === 1 ? "emerald" : index === 2 ? "teal" : "lime");
+                                                        const themeConfig = {
+                                                            amber: { bg: "bg-amber-500/5", border: "border-amber-500/20", text: "text-amber-400", icon: "fa-image" },
+                                                            emerald: { bg: "bg-emerald-500/5", border: "border-emerald-500/20", text: "text-emerald-400", icon: "fa-play" },
+                                                            teal: { bg: "bg-teal-500/5", border: "border-teal-500/20", text: "text-teal-400", icon: "fa-cube" },
+                                                            lime: { bg: "bg-lime-500/5", border: "border-lime-500/20", text: "text-lime-400", icon: "fa-bullhorn" }
+                                                        };
+                                                        const cfg = themeConfig[themeColor];
+
+                                                        return (
+                                                            <div key={key} className={`${cfg.bg} border ${cfg.border} rounded-2xl p-6 relative overflow-hidden group shadow-lg`}>
+                                                                {isCover && <div className="absolute top-0 right-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg text-[10px] font-bold rounded-bl-xl z-10">COVER (9:16)</div>}
+                                                                
+                                                                <div className="flex justify-between items-start mb-5">
+                                                                    <div>
+                                                                        <h3 className={`text-sm font-bold ${cfg.text} flex items-center gap-2`}><i className={`fa-solid ${cfg.icon}`}></i> Scene {index}: {key.replace(/^\d+_/, '').replace(/_/g, ' ')}</h3>
+                                                                        <p className="text-[10px] text-slate-400 mt-1 bg-black/40 px-2 py-0.5 rounded-full inline-block">Duration: {data.duration}</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                                                    <div className="bg-[#030712]/60 rounded-xl p-4 border border-white/5 shadow-inner">
+                                                                        <span className="text-[10px] text-slate-500 font-bold block mb-2 uppercase tracking-wide">Visual / Action</span>
+                                                                        <p className="text-xs text-slate-300 leading-relaxed">{data.visual} {data.action}</p>
+                                                                    </div>
+                                                                    <div className="bg-[#030712]/60 rounded-xl p-4 border border-white/5 shadow-inner">
+                                                                        <span className="text-[10px] text-slate-500 font-bold block mb-2 uppercase tracking-wide">Audio / Text</span>
+                                                                        <p className="text-xs text-slate-300 leading-relaxed italic">"{data.audio}"</p>
+                                                                        <p className="text-xs text-emerald-300 font-medium mt-2 bg-emerald-900/30 px-2 py-1 rounded inline-block">[{data.text_animation}]</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="border-t border-white/5 pt-5 mt-2">
+                                                                    <div className="flex justify-between items-center mb-3">
+                                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2"><i className="fa-solid fa-wand-magic"></i> Image Prompt</span>
+                                                                        <span className="text-[9px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded group-hover:bg-emerald-500/30 transition-colors">Editable <i className="fa-solid fa-pen ml-1"></i></span>
+                                                                    </div>
+                                                                    
+                                                                    <textarea 
+                                                                        value={editablePrompts[key]} 
+                                                                        onChange={(e) => handlePromptEdit(key, e.target.value)}
+                                                                        className="w-full bg-[#030712] border border-white/10 rounded-xl p-4 text-[12px] text-slate-300 font-mono mb-4 resize-none focus:outline-none focus:border-emerald-500/50 transition-colors shadow-inner"
+                                                                        rows="3"
+                                                                    ></textarea>
+                                                                    
+                                                                    <div className="flex flex-col md:flex-row gap-4 items-start">
+                                                                        <button 
+                                                                            onClick={() => handleGenerateImage(key)}
+                                                                            disabled={sceneIsGenerating[key]}
+                                                                            className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 border ${sceneIsGenerating[key] ? 'bg-slate-800 border-transparent text-slate-500 cursor-not-allowed' : 'bg-white/5 hover:bg-emerald-600 border-white/10 hover:border-emerald-500 text-white shadow-lg'}`}
+                                                                        >
+                                                                            {sceneIsGenerating[key] ? <><i className="fa-solid fa-spinner fa-spin"></i> Rendering...</> : <><i className="fa-solid fa-image"></i> Generate Image</>}
+                                                                        </button>
+                                                                        
+                                                                        {sceneImages[key] && (
+                                                                            <div className="flex-grow animate-fade-in">
+                                                                                <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#030712] p-2 inline-block shadow-[0_0_15px_rgba(0,0,0,0.5)] group/img">
+                                                                                    <img src={sceneImages[key]} alt={`Generated for ${key}`} className="max-h-56 object-contain rounded-lg" />
+                                                                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm rounded-lg">
+                                                                                        <button 
+                                                                                            onClick={() => downloadImage(sceneImages[key], `Marskey_${key}.png`)}
+                                                                                            className="bg-white text-black w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl hover:scale-110"
+                                                                                            title="Download"
+                                                                                        >
+                                                                                            <i className="fa-solid fa-download text-lg"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ========================================== */}
+                    {/* TAB 2: STORYBOARD UI (9:16 RATIO) */}
+                    {/* ========================================== */}
+                    <div style={{ display: activeTab === 'storyboard' ? 'block' : 'none' }}>
+                        <div className="glass-panel rounded-3xl p-6 md:p-8 min-h-[70vh]">
+                            
+                            <div className="mb-10 bg-[#030712]/40 border border-white/5 rounded-3xl p-6 md:p-8 shadow-inner relative overflow-hidden">
+                                <h3 className="text-xl font-bold text-white mb-8 flex items-center gap-3 relative z-10">
+                                    <i className="fa-solid fa-film text-teal-400"></i> Storyboard AI Studio
+                                </h3>
+                            
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 relative z-10">
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase"><i className="fa-solid fa-tag mr-2"></i>Nama Produk</h4>
+                                        <input 
+                                            type="text" 
+                                            className="w-full glass-input rounded-xl px-4 py-3 text-sm" 
+                                            placeholder="Ketik nama produk..." 
+                                            value={sbProductName} 
+                                            onChange={(e) => setSbProductName(e.target.value)} 
+                                        />
+                                    </div>
+
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase"><i className="fa-solid fa-layer-group mr-2"></i>Kategori Produk</h4>
+                                        <div className="relative">
+                                            <select 
+                                                className="w-full glass-input rounded-xl px-4 py-3 text-sm appearance-none cursor-pointer"
+                                                value={sbProductCategory} 
+                                                onChange={(e) => setSbProductCategory(e.target.value)}
+                                            >
+                                                <option value="" className="text-slate-500">Pilih Kategori (Opsional)...</option>
+                                                <option value="Fashion" className="bg-slate-900 text-white">Fashion</option>
+                                                <option value="Food" className="bg-slate-900 text-white">Food</option>
+                                                <option value="Electronic" className="bg-slate-900 text-white">Electronic</option>
+                                                <option value="Lainnya" className="bg-slate-900 text-white">Lainnya...</option>
+                                            </select>
+                                            <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 relative z-10">
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase">Upload Produk *</h4>
+                                        <label className="flex flex-col items-center justify-center w-full h-36 border border-dashed rounded-xl cursor-pointer bg-black/20 hover:bg-black/40 border-white/10 hover:border-emerald-400 transition-colors">
+                                            {sbProductImagePreview ? (
+                                                <div className="relative w-full h-full p-2 flex justify-center items-center"><img src={sbProductImagePreview} className="max-h-full rounded-lg object-contain" /></div>
+                                            ) : (
+                                                <div className="flex flex-col items-center"><i className="fa-solid fa-box-open text-slate-500 text-xl mb-2"></i><p className="text-[11px] text-slate-400">Pilih Produk</p></div>
+                                            )}
+                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setSbProductImage, setSbProductImagePreview)} />
+                                        </label>
+                                    </div>
+
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase">Upload Karakter (Opsional)</h4>
+                                        <label className="flex flex-col items-center justify-center w-full h-36 border border-dashed rounded-xl cursor-pointer bg-black/20 hover:bg-black/40 border-white/10 hover:border-teal-400 transition-colors">
+                                            {sbCharacterImagePreview ? (
+                                                <div className="relative w-full h-full p-2 flex justify-center items-center"><img src={sbCharacterImagePreview} className="max-h-full rounded-lg object-contain" /></div>
+                                            ) : (
+                                                <div className="flex flex-col items-center"><i className="fa-regular fa-face-smile text-slate-500 text-xl mb-2"></i><p className="text-[11px] text-slate-400">Pilih Karakter</p></div>
+                                            )}
+                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setSbCharacterImage, setSbCharacterImagePreview)} />
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative z-10">
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase"><i className="fa-solid fa-camera-retro mr-2"></i>Cara Menampilkan Produk</h4>
+                                        <div className="relative">
+                                            <select 
+                                                className="w-full glass-input rounded-xl px-4 py-3 text-sm appearance-none cursor-pointer"
+                                                value={sbDisplayMethod} 
+                                                onChange={(e) => setSbDisplayMethod(e.target.value)}
+                                            >
+                                                <option value="" className="text-slate-500">Pilih Aksi / Display...</option>
+                                                <option value="Pegang di Tangan" className="bg-slate-900 text-white">Pegang di Tangan</option>
+                                                <option value="Produk Saja" className="bg-slate-900 text-white">Produk Saja (Tanpa Orang)</option>
+                                                <option value="Unboxing" className="bg-slate-900 text-white">Unboxing / Buka Kotak</option>
+                                                <option value="Orang di Kamera" className="bg-slate-900 text-white">Orang di Kamera</option>
+                                            </select>
+                                            <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-slate-400 mb-3 tracking-wider uppercase"><i className="fa-solid fa-lightbulb mr-2 text-amber-400"></i>Tambahan Ide (Opsional)</h4>
+                                        <input 
+                                            type="text" 
+                                            className="w-full glass-input rounded-xl px-4 py-3 text-sm" 
+                                            placeholder="Misal: di luar angkasa, efek hujan..." 
+                                            value={sbAdditionalIdea} 
+                                            onChange={(e) => setSbAdditionalIdea(e.target.value)} 
+                                        />
+                                    </div>
+                                </div>
+
+                                {sbImageError && <div className="mb-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-bold text-center z-10 relative">{sbImageError}</div>}
+                                {sbVideoError && <div className="mb-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-bold text-center z-10 relative">{sbVideoError}</div>}
+
+                                {/* Action Buttons - Marketing Style */}
+                                <div className="flex flex-col md:flex-row gap-4 relative z-10 border-t border-white/5 pt-8">
+                                    <button 
+                                        onClick={sbIsGeneratingImage ? null : handleSbGenerateImage}
+                                        disabled={sbIsGeneratingImage}
+                                        className={`flex-1 py-4 px-4 rounded-xl font-bold text-sm transition-all duration-300 flex justify-center items-center gap-3 border-none ${!sbIsGeneratingImage ? 'bg-gradient-to-r from-emerald-600 to-teal-600 marketing-btn text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                                    >
+                                        {sbIsGeneratingImage ? <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Generating Visual...</> : <><i className="fa-solid fa-image text-lg"></i> Generate Visual Storyboard (9:16)</>}
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={sbIsGeneratingVideo ? null : handleSbGenerateVideoJson}
+                                        disabled={!sbStoryboardImagePreview || sbIsGeneratingVideo}
+                                        className={`flex-1 py-4 px-4 rounded-xl font-bold text-sm transition-all duration-300 flex justify-center items-center gap-3 border-none ${sbStoryboardImagePreview && !sbIsGeneratingVideo ? 'bg-gradient-to-r from-teal-500 to-green-600 marketing-btn text-white shadow-[0_0_20px_rgba(20,184,166,0.3)] hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                                    >
+                                        {sbIsGeneratingVideo ? <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Crafting Prompt...</> : <><i className="fa-solid fa-code text-lg"></i> Generate Video Prompt (JSON)</>}
+                                    </button>
+                                </div>
+
+                                {/* OUTPUT GAMBAR STORYBOARD */}
+                                {sbStoryboardImagePreview && (
+                                    <div className="mt-10 relative z-10 animate-fade-in border border-white/10 pt-8 pb-8 rounded-3xl bg-[#030712]/60 text-center shadow-[inset_0_4px_20px_rgba(0,0,0,0.5)] flex flex-col items-center">
+                                        <h4 className="text-[12px] font-bold text-emerald-400 mb-6 flex items-center justify-center gap-2 uppercase tracking-wider"><i className="fa-solid fa-check-circle"></i> Visual Storyboard Ready</h4>
+                                        <div className="relative group rounded-2xl overflow-hidden border border-white/10 bg-[#030712] p-2 shadow-2xl transition-all hover:border-emerald-500/50 w-[320px] max-w-full">
+                                            <img src={sbStoryboardImagePreview} className="w-full object-cover rounded-xl mx-auto" alt="Generated Storyboard" />
+                                            
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4 backdrop-blur-sm rounded-2xl">
+                                                <button 
+                                                    onClick={() => {
+                                                        const win = window.open();
+                                                        win.document.body.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#030712; margin:0;"><img src="${sbStoryboardImagePreview}" style="max-height:95vh; object-fit:contain; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);" /></div>`;
+                                                        win.document.title = "Preview Storyboard";
+                                                    }}
+                                                    className="bg-white text-slate-900 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl hover:scale-110"
+                                                    title="Preview Fullscreen"
+                                                >
+                                                    <i className="fa-solid fa-eye text-lg"></i>
+                                                </button>
+                                                <button 
+                                                    onClick={() => downloadImage(sbStoryboardImagePreview, 'Marskey_Storyboard.png')}
+                                                    className="bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl hover:scale-110"
+                                                    title="Download Image"
+                                                >
+                                                    <i className="fa-solid fa-download text-lg"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* OUTPUT VIDEO JSON */}
+                                {sbGeneratedVideoJson && (
+                                    <div className="mt-8 relative z-10 animate-fade-in border-t border-white/5 pt-8">
+                                        <h4 className="text-[11px] font-bold text-amber-400 mb-4 flex items-center gap-2 uppercase tracking-wider"><i className="fa-solid fa-file-code"></i> Text-to-Video Prompt Data (JSON)</h4>
+                                        <div className="bg-[#030712] border border-white/5 p-5 rounded-2xl relative group shadow-inner">
+                                            <button onClick={() => { copyText(JSON.stringify(sbGeneratedVideoJson, null, 4)); }} className="absolute top-4 right-4 bg-white/5 hover:bg-amber-500 text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center transition-all shadow-md" title="Copy JSON">
+                                                <i className="fa-regular fa-copy text-sm"></i>
+                                            </button>
+                                            <pre className="text-[12px] text-emerald-400 overflow-auto max-h-64 custom-scrollbar pr-8 font-mono">
+                                                <code>{JSON.stringify(sbGeneratedVideoJson, null, 4)}</code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
